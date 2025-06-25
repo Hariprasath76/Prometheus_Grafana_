@@ -1,0 +1,89 @@
+Install Grafana on Ubuntu ===> Main_Server:
+
+Step 1: Update Your System
+sudo apt update && sudo apt upgrade -y
+
+Step 2: Install Grafana
+cd /opt/
+sudo wget https://dl.grafana.com/enterprise/release/grafana-enterprise-11.6.0.linux-amd64.tar.gz
+tar -zxvf grafana-enterprise-11.6.0.linux-amd64.tar.gz
+
+Step 3: Create a Grafana user:
+sudo useradd --no-create-home --shell /bin/false grafana
+
+Step 4: Move Grafana to /usr/local/bin and set permissions:
+cd /opt/grafana-v11.6.0
+sudo cp bin/* /usr/local/bin/
+sudo chown -R grafana:grafana /usr/local/bin/grafana*
+
+Step 5: Write the Service - file: 
+sudo nano /etc/systemd/system/grafana-server.service
+------------------------------------------------------------
+[Unit]
+Description=Grafana instance
+After=network.target
+
+[Service]
+User=grafana
+Group=grafana
+Type=simple
+ExecStart=/usr/local/bin/grafana-server \
+  --homepath=/opt/grafana-v11.6.0 \
+  --config=/opt/grafana-v11.6.0/conf/defaults.ini
+
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+
+-------------------------------------------------------------
+Step 6: Change the ownership:
+sudo chown -R grafana:grafana /opt/grafana-v11.6.0
+sudo chmod -R 755 /opt/grafana-v11.6.0
+
+
+Step 7: Start and Enable Grafana
+sudo systemctl daemon-reload
+sudo systemctl start grafana-server
+sudo systemctl enable grafana-server
+
+Step 8: Open Grafana in Browser:
+http://<your-server-ip>:3000
+
+
+Username: admin
+
+Password: admin
+
+
+Step 9: grafana dashboard download - node exporter full:
+
+
+Step 10: #TO Set a email:
+sudo nano /opt/grafana-v11.6.0/conf/grafana.ini
+----------------
+
+
+[smtp]
+enabled = true
+host = smtp.gmail.com:587
+user = hariprasath.m@grouppal.in
+password = kukg zqvt owic ayep           #In gmail - 16 code (add app grafana)
+from_address = hariprasath.m@grouppal.in
+from_name = Grafana Alerts
+startTLS_policy = Opportunistic
+
+
+---------------
+
+Restart the grafana:
+sudo systemctl restart grafana-server
+
+Run the file: 
+./bin/grafana-server --config=conf/grafana.ini
+
+
+full time:
+nohup ./bin/grafana-server --config=conf/grafana.ini > grafana.log 2>&1 &
+
+

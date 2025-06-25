@@ -1,0 +1,91 @@
+Client Machine:
+
+Step 1: Update the system
+sudo apt update && sudo apt upgrade -y
+
+Step 2: Create a user for Node Exporter
+sudo useradd -rs /bin/false node_exporter
+
+Step 3: Download Node Exporter Binary
+wget https://github.com/prometheus/node_exporter/releases/download/v1.8.1/node_exporter-1.8.1.linux-amd64.tar.gz
+tar xvf node_exporter-1.8.1.linux-amd64.tar.gz
+cd node_exporter-1.8.1.linux-amd64
+
+Move the binary:
+sudo cp node_exporter /usr/local/bin/
+sudo chown node_exporter:node_exporter /usr/local/bin/node_exporter
+
+Step 4: Create a systemd service
+sudo nano /etc/systemd/system/node_exporter.service
+
+-----------------------------------------------------
+
+[Unit]
+Description=Node Exporter
+After=network.target
+
+[Service]
+User=node_exporter
+Group=node_exporter
+Type=simple
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=default.target
+
+---------------------------------------------------
+Step 5: Start and Enable the Service
+sudo systemctl daemon-reload
+sudo systemctl start node_exporter
+sudo systemctl enable node_exporter
+
+Step 6: Check Status and Port
+sudo systemctl status node_exporter
+
+Node Exporter listens on port 9100:
+
+Main_Server: 
+
+sudo nano prometheus.yml
+-------------------------------------
+  - job_name: 'node_exporter_clients'
+    static_configs:
+      - targets: ['<client_ip>:9100']
+
+--------------------------------------
+Reload Prometheus Service:
+sudo systemctl restart prometheus
+
+
+===============================================
+Check the prometheus :
+node_exporter is giving the data or not .
+in prometheus click Target 
+*you can see the output of the client server.
+===============================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

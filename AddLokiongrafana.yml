@@ -1,0 +1,8 @@
+Grafana-Server:
+<ip:3000>:
+
+Go to Grafana -> setting -> 
+datasource -> Add data source 
+-> Loki -> url:3100 
+-> Save & targets
+---------------------------
